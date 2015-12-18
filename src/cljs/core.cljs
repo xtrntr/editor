@@ -8,52 +8,23 @@
 
 ;; define your app data so that it doesn't get over-written on reload
 
-(defonce app-state (atom {:text "Hello world!"}))
+(def app-state 
+  (atom 
+   {:panning false
+    :text "kay"}))
+
 (def mouse-chan (chan))
-
-(def Canvas (js/React.createFactory js/fabric.Canvas))
-(def Rect (js/React.createFactory js/fabric.Rec))
-
-(defn debug []
-  (.log js/console "maxD"))
-                                        ;(.on canv "mouse:down" debug)
-
-;; this will override fabric's events =(
-(comment
-  (def canvas (. js/document (getElementById "canv")))
-
-  (defn listen [el type]
-    (let [out (chan)]
-      (events/listen el type
-                     (fn [e] (put! out e)))
-      out))
-
-  (defn init []
-    (let [clicks (listen canvas "click")]
-      (go (while true
-            (<! clicks)
-            (.log js/console "xD")
-            ))))
-  (.log js/console canvas)
-  (init))
-
-(defn refresh-canvas [app-state owner]
-  "all drawing functions to be included here"
-  (let [canvas (om/get-node owner)
-        context (.getContext canvas "2d")]
-    (.log js/console "pressed something xD")
-    ))
 
 (defn main-canvas [app-state owner]
   (reify     
     om/IInitState
-    (init-state [_]
+    (init-state [_] 
       {:mouse-chan mouse-chan})
     om/IDidMount
     (did-mount [_]
       (let [window js/window
-            canvas (. js/document (getElementById "canvas"))]
-        (events/listen window "click" #(put! mouse-chan {:event % :mouseevent :click}))
+            canvas (. js/document (getElementById "canv-wrapper"))]
+        (events/listen canvas "click" #(put! mouse-chan {:event % :mouseevent :click}))
         (events/listen canvas "mousedown" #(put! mouse-chan {:event % :mouseevent :mousedown}))
         (events/listen canvas "mouseup" #(put! mouse-chan {:event % :mouseevent :mouseup}))
         (events/listen canvas "mousemove" #(put! mouse-chan {:event % :mouseevent :mousemove})))
@@ -62,10 +33,13 @@
               (let [mouse-event (<! mouse-chan)
                     mouse-keyword (:mouseevent mouse-event)]
                 (cond
-                 (= mouse-keyword :click) (.log js/console "xD")
-                 (= mouse-keyword :mousemove) (.log js/console "move") 
-                 (= mouse-keyword :mouseup) (.log js/console "mouseup")
-                 (= mouse-keyword :mousedown) (.log js/console "mousedown")
+                 (= mouse-keyword :click) (do (om/set-state! owner [:panning] true)
+                                              )
+                 (= mouse-keyword :mousemove) (if (= true (om/get-state owner [:panning]))
+                                                (.log js/console "pan")
+                                                (.log js/console "notpan"))
+                 (= mouse-keyword :mouseup) (om/set-state! owner [:panning] false)
+                 (= mouse-keyword :mousedown) (.log js/console (om/get-state owner [:panning]))
                  :else (.log js/console "else")
                  ))))))
     om/IRender
@@ -76,13 +50,11 @@
             :height 333})
       )))
 
-(comment)
 (om/root 
  main-canvas 
  app-state 
  {:target (. js/document (getElementById "canv-wrapper"))})
 
-(comment)
 (def canv (new js/fabric.Canvas "canvas"))
 (def rect (new js/fabric.Rect #js {:left 20
                                    :top 20
@@ -94,7 +66,7 @@
                                                         :top 0
                                                         :opacity 0.85
                                                         }))
-;(.add canv cat-instance)
+                                        ;(.add canv cat-instance)
 (.add canv rect)
 (.setBackgroundImage canv cat-instance (.bind (.-renderAll canv) canv) 
                      #js {:originX "left"
