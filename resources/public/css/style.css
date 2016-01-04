@@ -1,2 +1,231 @@
+@import url("fonts/fontello-c1686fe7/css/fontello.css");
+
+/************************************************************/
+/* Global */
+/************************************************************/
+
+i
+{
+  text-shadow: 1px 1px 1px #000;
+}
+
+a:link
+{
+  color: #ffffff;
+}
+
+a:visited
+{
+  color: #929292;
+}
+
+body
+{
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
 /* some style */
 
+#background-canvas
+{
+  position: absolute;
+  top: 170px;
+  left: 280px;
+  outline: 4px solid #929292;
+  box-shadow: 1px 1px 5px 5px rgba(0,0,0,0.3);
+}
+
+#overlay-canvas
+{
+  position: absolute;
+  top: 170px;
+  left: 280px;
+  outline: 4px solid #929292;
+  box-shadow: 1px 1px 5px 5px rgba(0,0,0,0.3);
+}
+
+#canvas-mouse-handler
+{
+  position: absolute;
+  top: 170px;
+  left: 280px;
+  width: 512px;
+  height: 512px;
+  cursor: pointer;
+}
+
+#command-selector
+{
+  position: absolute;
+  top: 320px;
+  width: 230px;
+  height: 132px;
+  margin-left: 0px;
+  background: #161616;
+  clear: both;
+  overflow: auto;
+}
+
+.PaletteContainer
+{
+  position: absolute;
+  top: 185px;
+  width: 230px;
+  height: 132px;
+  margin-left: 0px;
+  background: #161616;
+}
+
+.palette-colors
+{
+  clear: both;
+  margin-left: 3px;
+  height: 100px;
+  overflow: auto;
+}
+
+.palette_entry
+{
+  width: 15px;
+  height: 15px;
+  margin: 0px;
+  float: left;
+  cursor: pointer;
+  box-sizing: border-box;
+}
+
+.palette_entry:hover
+{
+  border: 2px solid #ffffff;
+}
+
+.palette_entry_selected
+{
+  border: 2px solid #ffffff;
+}
+
+.background-color-button
+{
+  padding-right: 13px;
+  font-family: "Futura";
+  font-size: 12px;
+  font-weight: normal;
+  color: #c2c2c2;
+  background: #323232;
+  text-align: right;
+  line-height: 31px;
+  height: 32px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  cursor: pointer;
+}
+
+.background-color-button:hover
+{
+  color: #e2e2e2;
+  background: #212121;
+}
+
+.palette_adder_entry
+{
+  float: left;
+  width: 120px;
+  height: 32px;
+  margin-bottom: 4px;
+  background: #323232;
+}
+
+.palette_adder_entry_input
+{
+  width: 25px;
+  height: 25px;
+  margin: 4px;
+  cursor: pointer;
+  float: left;
+}
+
+.palette_adder_entry_button
+{
+  font-family: "Futura";
+  font-size: 12px;
+  font-weight: normal;
+  color: #c2c2c2;
+  text-align: left;
+  padding-left: 45px;
+  line-height: 32px;
+  height: 32px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  cursor: pointer;
+}
+
+.palette_adder_entry_button:hover
+{
+  color: #e2e2e2;
+  background: #212121;
+}
+
+/** commandsz! **/
+
+.command-menu
+{
+  position: absolute;
+  width: 230px;
+  top: 70px;
+  height: 50px;
+  margin-left: 0px;
+  margin-right: 0px;
+  padding-left: 3px;
+}
+
+.command-type-item
+{
+  font-family: "Futura";
+  font-size: 10px;
+  font-weight: normal;
+  color: #a2a2a2;
+  text-align: right;
+  float: left;
+  cursor: pointer;
+  line-height: 25px;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  padding-left: 3px;
+  margin: 2px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+}
+
+.command-type-item-selected
+{
+  background: #212121;
+  color: #d2d2d2;
+
+  outline: 1px solid #828282;
+}
+
+.command-type-item:hover
+{
+  color: #e2e2e2;
+}
+
+.command-type-item i
+{
+  padding-right: 2px;
+  font-size: 19px;
+  font-weight: normal;
+}
+
+.selected-color-indicator
+{
+  clear: both;
+  width: 207px;
+  height: 10px;
+  margin-top: 10px;
+  margin-left: 5px;
+  float: left;
+}
