@@ -7,6 +7,7 @@
             [editor.appstate :as app]
             [editor.components.overlaycanvas :as overlaycanvas]
             [editor.components.canvas :as editorcanvas]
+            [editor.components.keylistener :as keyhandler]
             [editor.components.mouselistener :as mousehandler]
             [editor.components.test :as test]
             [editor.components.commands :as commands]))
@@ -35,3 +36,8 @@
  commands/command-selector-component
  app/app-state
  {:target (. js/document (getElementById "command-selector"))})
+
+(om/root
+ keyhandler/key-listener-component
+ app/app-state
+ {:target (. js/document (getElementById "global-key-handler"))})

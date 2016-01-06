@@ -30,7 +30,7 @@ body
 
 /* some style */
 
-#background-canvas
+.canvas
 {
   position: absolute;
   top: 170px;
@@ -39,14 +39,6 @@ body
   box-shadow: 1px 1px 5px 5px rgba(0,0,0,0.3);
 }
 
-#overlay-canvas
-{
-  position: absolute;
-  top: 170px;
-  left: 280px;
-  outline: 4px solid #929292;
-  box-shadow: 1px 1px 5px 5px rgba(0,0,0,0.3);
-}
 
 #canvas-mouse-handler
 {

@@ -16,7 +16,7 @@
   (reify
     om/IRenderState
     (render-state [this {:keys [command-chan command-name css-class]}]
-      (let [current-command-type (get-in app [:tools :command-type])
+      (let [current-command-type (get-in app [:tools :command-mode])
             class-name (class-name-for-command current-command-type command-name)]
         (omdom/div #js {:className class-name
                         :onClick (fn [e] (put! command-chan command-name))}
@@ -45,14 +45,14 @@
     (render-state [this {:keys [command-chan]}]
       (omdom/div #js {:className "command-menu"}
         (om/build command-button-component app {:init-state {:command-chan command-chan
-                                                             :command-name :dot
+                                                             :command-mode :dot
                                                              :css-class "icon-brush"}})
         (om/build command-button-component app {:init-state {:command-chan command-chan
-                                                             :command-name :line
+                                                             :command-mode :line
                                                              :css-class "icon-pencil"}})
         (om/build command-button-component app {:init-state {:command-chan command-chan
-                                                             :command-name :arc
+                                                             :command-mode :arc
                                                              :css-class "icon-edit"}})
         (om/build command-button-component app {:init-state {:command-chan command-chan
-                                                             :command-name :panning
+                                                             :command-mode :panning
                                                              :css-class "icon-bucket"}})))))
