@@ -19,12 +19,23 @@
                       (sq (abs (- y1 y2)))))))
 
 (defn handle-mouse-event [app owner e]
-  (let [event-type (.-type e)
+  (let [
+        canvas-offset-x (get-in @app [:drawing :canvas-offset-x])
+        canvas-offset-y (get-in @app [:drawing :canvas-offset-y])
+        zoom (get-in @app [:drawing :zoom-factor])
+        mouse-mode (get-in @app [:drawing :mouse-mode])
+        element-draw-step (get-in @app [:drawing :element-draw-step])
+        element-to-draw (get-in @app [:drawing :element-to-draw])
+        paint-color (get-in @app [:drawing :paint-color])
+        straight-line-snapping (get-in @app [:drawing :straight-line-snapping])
+        x1 (get-in @app [:drawing :x1])
+        y1 (get-in @app [:drawing :y1])
+        
+        event-type (.-type e)
         mouse-down? (= event-type "mousedown")
         mouse-up? (= event-type "mouseup")
         mouse-move? (= event-type "mousemove")
         mouse-wheel? (= event-type "mousewheel")
-        mouse-mode (get-in app [:tools :mouse-mode])
         panning-mode (= :panning mouse-mode)
         drawing-mode (= :drawing mouse-mode)
 
@@ -35,28 +46,21 @@
         point-of-click-y (om/get-state owner :point-of-click-y)
         canvas-x (.-offsetX e)
         canvas-y (.-offsetY e)
-        canvas-offset-x (get-in app [:main-app :canvas-offset-x])
-        canvas-offset-y (get-in app [:main-app :canvas-offset-y])
-        zoom (get-in app [:main-app :zoom-factor])
         pixel-x (canvas2pixel canvas-x canvas-offset-x zoom)
         pixel-y (canvas2pixel canvas-y canvas-offset-y zoom)
 
         ;variables for drawing
-        element-draw-step (get-in app [:main-app :drawing :element-draw-step])
         step1 (= element-draw-step 1)
         step2 (= element-draw-step 2)
         step3 (= element-draw-step 3)
 
         ;conditions for drawing
-        element-to-draw (get-in app [:main-app :drawing :element-to-draw])
         rect-being-drawn (= element-to-draw :rect) 
         circ-being-drawn (= element-to-draw :circ)
         polyline-being-drawn (= element-to-draw :polyline)
         arc-being-drawn (= element-to-draw :arc)
         dot-being-drawn (= element-to-draw :dot)
         line-being-drawn (= element-to-draw :line)
-        paint-color (get-in app [:tools :paint-color])
-        straight-line-snapping (get-in app [:drawing :straight-line-snapping])
         
         ;variables for zooming
         ;a mouse wheel will be +/- 120
@@ -74,10 +78,6 @@
         is-drawing? (and drawing-mode (not dot-being-drawn))
         ]
     
-    (om/update! app [:main-app :canvas-y] canvas-y)
-    (om/update! app [:main-app :canvas-x] canvas-x)
-    (.log js/console element-to-draw)   
-    
     (when start-drawing?
       (when dot-being-drawn
         (om/transact! app [:main-app :elements] 
@@ -91,9 +91,7 @@
           (om/update! app [:drawing :element-draw-step] 2)
           (.log js/console "1"))
         (when step2
-          (let [x1 (get-in app [:drawing :x1])
-                y1 (get-in app [:drawing :y1])
-                delta-x (abs (- x1 pixel-x))
+          (let [delta-x (abs (- x1 pixel-x))
                 delta-y (abs (- y1 pixel-y))
                 snap-to-x-axis (> delta-x delta-y)]
             (.log js/console "2")
@@ -128,9 +126,7 @@
           (om/update! app [:drawing :circ-size] 0)
           (om/update! app [:drawing :element-draw-step] 2))
         (when step2
-          (let [x1 (get-in app [:drawing :x1])
-                y1 (get-in app [:drawing :y1])
-                size (get-in app [:drawing :circ-size])]
+          (let [size (get-in @app [:drawing :circ-size])]
             (om/transact! app [:main-app :elements]
               (fn [x] 
                 (conj x {:type :circ :x x1 :y y1 
@@ -142,9 +138,7 @@
         (om/update! app [:drawing :x1] pixel-x)
         (om/update! app [:drawing :y1] pixel-y))
       (when step2
-        (let [x1 (get-in app [:drawing :x1])
-              y1 (get-in app [:drawing :y1])
-              delta-x (abs (- x1 pixel-x))
+        (let [delta-x (abs (- x1 pixel-x))
               delta-y (abs (- y1 pixel-y))
               snap-to-x-axis (> delta-x delta-y)
               circ-size (dist x1 y1 pixel-x pixel-y)]
@@ -169,22 +163,22 @@
     (when stop-panning?
       (om/set-state! owner :user-is-panning false)) 
     (when is-panning?
-      (om/update! app [:main-app :canvas-offset-x] (+ last-off-x (- canvas-x point-of-click-x)))
-      (om/update! app [:main-app :canvas-offset-y] (+ last-off-y (- canvas-y point-of-click-y))))
+      (om/update! app [:drawing :canvas-offset-x] (+ last-off-x (- canvas-x point-of-click-x)))
+      (om/update! app [:drawing :canvas-offset-y] (+ last-off-y (- canvas-y point-of-click-y))))
     (when zoom-out?
       (let [new-zoom (+ zoom 0.1) 
             new-canvas-offset-x (- (/ (- pixel-x (* canvas-x new-zoom)) new-zoom))
             new-canvas-offset-y (- (/ (- pixel-y (* canvas-y new-zoom)) new-zoom))]
-        (om/update! app [:main-app :zoom-factor]  new-zoom)
-        (om/update! app [:main-app :canvas-offset-x] new-canvas-offset-x)
-        (om/update! app [:main-app :canvas-offset-y] new-canvas-offset-y)))
+        (om/update! app [:drawing :zoom-factor]  new-zoom)
+        (om/update! app [:drawing :canvas-offset-x] new-canvas-offset-x)
+        (om/update! app [:drawing :canvas-offset-y] new-canvas-offset-y)))
     (when zoom-in?
       (let [new-zoom (- zoom 0.1)
             new-canvas-offset-x (- (/ (- pixel-x (* canvas-x new-zoom)) new-zoom))
             new-canvas-offset-y (- (/ (- pixel-y (* canvas-y new-zoom)) new-zoom))]
-        (om/update! app [:main-app :zoom-factor]  new-zoom)
-        (om/update! app [:main-app :canvas-offset-x] new-canvas-offset-x)
-        (om/update! app [:main-app :canvas-offset-y] new-canvas-offset-y)))
+        (om/update! app [:drawing :zoom-factor]  new-zoom)
+        (om/update! app [:drawing :canvas-offset-x] new-canvas-offset-x)
+        (om/update! app [:drawing :canvas-offset-y] new-canvas-offset-y)))
     ))
 
 (defn mouse-listener-component
@@ -221,9 +215,8 @@
     
     om/IRender
     (render [this]
-      (let [screen-canvas-width (get-in app [:main-app :canvas-width])
-            screen-canvas-height (get-in app [:main-app :canvas-height])
-            zoom-factor (get-in app [:main-app :zoom-factor])]
+      (let [screen-canvas-width (get-in app [:canvas-width])
+            screen-canvas-height (get-in app [:canvas-height])]
         (dom/div #js {:id "painter-watcher"
                       :style #js {:width screen-canvas-width
                                   :height screen-canvas-height}

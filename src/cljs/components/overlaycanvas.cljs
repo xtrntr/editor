@@ -16,28 +16,29 @@
 
 (defn draw-overlay-active
   [app owner dom-node-ref]
-  (let [canvas (om/get-node owner dom-node-ref)
-        ctx (.getContext canvas "2d") 
-        width (.-width canvas)
-        height (.-height canvas)
-
-        paint-color (get-in @app [:tools :paint-color])
-        element-draw-step (get-in @app [:drawing :element-draw-step])
-        step1 (= element-draw-step 1)
-        step2 (= element-draw-step 2)
-        step3 (= element-draw-step 3)
-
-        element-to-draw (get-in @app [:drawing :element-to-draw])
-        canvas-offset-x (get-in @app [:main-app :canvas-offset-x])
-        canvas-offset-y (get-in @app [:main-app :canvas-offset-y])
+  (let [
         size (get-in @app [:drawing :circ-size])
-        zoom (get-in @app [:main-app :zoom-factor])
+        canvas-offset-x (get-in @app [:drawing :canvas-offset-x])
+        canvas-offset-y (get-in @app [:drawing :canvas-offset-y])
+        zoom (get-in @app [:drawing :zoom-factor])
         canvas-x1 (pixel2canvas (get-in @app [:drawing :x1]) canvas-offset-x zoom)
         canvas-y1 (pixel2canvas (get-in @app [:drawing :y1]) canvas-offset-y zoom)
         canvas-x2 (pixel2canvas (get-in @app [:drawing :x2]) canvas-offset-x zoom)
         canvas-y2 (pixel2canvas (get-in @app [:drawing :y2]) canvas-offset-y zoom)
         canvas-x3 (pixel2canvas (get-in @app [:drawing :x3]) canvas-offset-x zoom)
         canvas-y3 (pixel2canvas (get-in @app [:drawing :y3]) canvas-offset-y zoom)
+        paint-color (get-in @app [:drawing :paint-color])
+        element-draw-step (get-in @app [:drawing :element-draw-step])
+        element-to-draw (get-in @app [:drawing :element-to-draw])
+
+        canvas (om/get-node owner dom-node-ref)
+        ctx (.getContext canvas "2d") 
+        width (.-width canvas)
+        height (.-height canvas)
+
+        step1 (= element-draw-step 1)
+        step2 (= element-draw-step 2)
+        step3 (= element-draw-step 3)
 
         ;conditions
         rect-being-drawn (= element-to-draw :rect)
@@ -54,16 +55,16 @@
       (draw-circ ctx canvas-x1 canvas-y1 paint-color size))
     ))
 
-(defn draw-overlay-drawn
+(defn draw-overlay-drawn 
   [app owner dom-node-ref]
   (let [canvas (om/get-node owner dom-node-ref)
         ctx (.getContext canvas "2d") 
         width (.-width canvas) 
         height (.-height canvas)
         elements (get-in @app [:main-app :elements])
-        canvas-offset-x (get-in @app [:main-app :canvas-offset-x])
-        canvas-offset-y (get-in @app [:main-app :canvas-offset-y])
-        zoom (get-in @app [:main-app :zoom-factor])
+        canvas-offset-x (get-in @app [:drawing :canvas-offset-x])
+        canvas-offset-y (get-in @app [:drawing :canvas-offset-y])
+        zoom (get-in @app [:drawing :zoom-factor])
         ] 
     (doseq [element elements]
       (let [{type :type} element
@@ -77,6 +78,7 @@
             (draw-dot ctx (conv-x x) (conv-y y) color 10)))
         (when (= :circ type)
           (let [{:keys [x y color size]} element]
+            (.log js/console element)
             (draw-circ ctx (conv-x x) (conv-y y) color size)
             ))
         ))
@@ -97,8 +99,8 @@
     
     om/IRender
     (render [this]
-      (let [width (get-in app [:main-app :canvas-width]) 
-            height (get-in app [:main-app :canvas-height])]
+      (let [width (get-in app [:canvas-width]) 
+            height (get-in app [:canvas-height])]
         (dom/canvas
          #js {:id "overlay-canvas"
               :width width

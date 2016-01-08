@@ -37,4 +37,4 @@
                  (omdom/div #js {:className "history-menu-header-text"}
                             (omdom/i #js {:className "icon-back-in-time"})
                             "History")))))
- 
+

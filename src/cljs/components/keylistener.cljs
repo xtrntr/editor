@@ -30,10 +30,12 @@
 (def BACKSPACE-KEY 8)
 
 (defn toggle-panning [app]
-  (om/update! app [:tools :mouse-mode] :panning))
+  (.log js/console "pan")
+  (om/update! app [:drawing :mouse-mode] :panning))
 
 (defn toggle-drawing [app] 
-  (om/update! app [:tools :mouse-mode] :drawing))
+  (.log js/console "draw")
+  (om/update! app [:drawing :mouse-mode] :drawing))
  
 (defn handle-key-event [app event]
   (let [keyCode (.-keyCode event)
