@@ -1,6 +1,6 @@
 (ns editor.components.test
   (:require-macros [cljs.core.async.macros :refer [go]])
-	(:require [goog.dom :as dom]
+  (:require [goog.dom :as dom]
             [om.core :as om :include-macros true]
             [om.dom :as omdom :include-macros true]
             [cljs.core.async :refer [put! chan <! alts!]]))
@@ -15,10 +15,10 @@
   (om/update! app [:tools :paint-color] color))
 
 (defn add-color [app color]
-  (let [palette (get-in @app [:palette])
+  (let [palette (get-in @app [:main-app :palette])
         color-is-new (not (some #(= {:color color} %) palette))]
   (when color-is-new
-    (om/transact! app [:palette] #(conj % {:color color})))
+    (om/transact! app [:main-app :palette] #(conj % {:color color})))
   (set-paint-color app color)
   (when color-is-new
     ))) 
@@ -30,7 +30,6 @@
       (omdom/div
        #js {:className (class-name-for-entry current-color (:color entry))
             :style #js {:backgroundColor (:color entry)}
-            :text "cooties"
             :onClick #(put! selectchan (:color @entry))}
        ""))))
 
@@ -86,6 +85,6 @@
       (omdom/div #js {:className "palette"}
         (om/build palette-adder-component app {:init-state {:addchan addchan}})
         (om/build palette-current-colors-component
-                  {:palette (get-in app [:palette])
-                   :tools (get-in app [:tools])}
+                  {:palette (get-in app [:main-app :palette])
+                   :tools (get-in app [:main-app :tools])}
                   {:init-state {:selectchan selectchan}})))))

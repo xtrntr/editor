@@ -15,11 +15,11 @@
   [app owner]
   (reify
     om/IRenderState
-    (render-state [this {:keys [command-chan command-name css-class]}]
-      (let [current-command-type (get-in app [:tools :command-mode])
-            class-name (class-name-for-command current-command-type command-name)]
+    (render-state [this {:keys [command-chan element-to-draw css-class]}]
+      (let [current-command-type (get-in app [:drawing :element-to-draw])
+            class-name (class-name-for-command current-command-type element-to-draw)]
         (omdom/div #js {:className class-name
-                        :onClick (fn [e] (put! command-chan command-name))}
+                        :onClick (fn [e] (put! command-chan element-to-draw))}
                    (omdom/i #js {:className css-class}))
         ))))
 
@@ -31,7 +31,7 @@
       {:command-chan (chan)
        :color-chan (chan)})
 
-    om/IWillMount
+    om/IWillMount 
     (will-mount [_]
       (let [command-chan (om/get-state owner :command-chan)]
         (go
@@ -39,20 +39,21 @@
             (let [[v ch] (alts! [command-chan])]
               (when (= ch command-chan)
                 (do
-                  (om/update! app [:tools :command-type] v))))))))
+                  (om/update! app [:drawing :element-to-draw] v)
+                  (recur))))))))
      
     om/IRenderState
     (render-state [this {:keys [command-chan]}]
       (omdom/div #js {:className "command-menu"}
         (om/build command-button-component app {:init-state {:command-chan command-chan
-                                                             :command-mode :dot
+                                                             :element-to-draw :dot
                                                              :css-class "icon-brush"}})
         (om/build command-button-component app {:init-state {:command-chan command-chan
-                                                             :command-mode :line
+                                                             :element-to-draw :line
                                                              :css-class "icon-pencil"}})
         (om/build command-button-component app {:init-state {:command-chan command-chan
-                                                             :command-mode :arc
+                                                             :element-to-draw :circ
                                                              :css-class "icon-edit"}})
         (om/build command-button-component app {:init-state {:command-chan command-chan
-                                                             :command-mode :panning
+                                                             :element-to-draw :panning
                                                              :css-class "icon-bucket"}})))))

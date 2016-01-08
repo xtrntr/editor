@@ -7,6 +7,7 @@
             [editor.appstate :as app]
             [editor.components.overlaycanvas :as overlaycanvas]
             [editor.components.canvas :as editorcanvas]
+            [editor.components.historylist :as historylist]
             [editor.components.keylistener :as keyhandler]
             [editor.components.mouselistener :as mousehandler]
             [editor.components.test :as test]
@@ -41,3 +42,15 @@
  keyhandler/key-listener-component
  app/app-state
  {:target (. js/document (getElementById "global-key-handler"))})
+
+(om/root
+ historylist/history-list-component
+ app/app-state
+ {:target (. js/document (getElementById "undo-history"))})
+
+(om/root
+ historylist/header-component
+ app/app-state
+ {:target (. js/document (getElementById "time-machine-header"))
+  :path [:main-app :undo-history]})
+ 

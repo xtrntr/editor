@@ -5,6 +5,7 @@
             [om.dom :as omdom :include-macros true]
             [cljs.core.async :refer [put! chan <! alts!]]))
 
+(def ESC-KEY 27)
 (def ONE-KEY 49)
 (def TWO-KEY 50)
 (def THREE-KEY 51)
@@ -28,13 +29,11 @@
 (def RIGHT-ARROW-KEY 39)
 (def BACKSPACE-KEY 8)
 
-(defn toggle-panning [app] 
-  (.log js/console "pan")
-  (om/update! app [:tools :command-mode] :panning))
+(defn toggle-panning [app]
+  (om/update! app [:tools :mouse-mode] :panning))
 
 (defn toggle-drawing [app] 
-  (.log js/console "draw")
-  (om/update! app [:tools :command-mode] :drawing))
+  (om/update! app [:tools :mouse-mode] :drawing))
  
 (defn handle-key-event [app event]
   (let [keyCode (.-keyCode event)
@@ -46,11 +45,11 @@
                    ;  #(timemachine/do-redo)
                    ;(and (= keyCode Z-KEY) (or ctrlKey metaKey))
                    ;  #(timemachine/do-undo)
+                 (= keyCode ESC-KEY) #(om/update! app [:drawing :element-draw-step] 1)
                  (or ctrlKey metaKey) #(toggle-panning app)
                  :else #(toggle-drawing app)
                  )]
     (when-not (= handler nil) (handler app))))
-
 
 (defn key-listener-component [app owner]
   (reify

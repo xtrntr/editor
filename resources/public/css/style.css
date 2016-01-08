@@ -221,3 +221,88 @@ body
   margin-left: 5px;
   float: left;
 }
+
+.TimeMachineContainer
+{
+  position: absolute;
+  width: 230px;
+  height: 1250px;
+  top: 0px;
+  right: 0px;
+  background: #2a2a2a;
+  overflow: auto;
+  box-shadow: 3px 3px 5px 5px rgba(0,0,0,0.3);
+}
+
+
+/************************************************************/
+/* Undo History */
+/************************************************************/
+
+.undo-list
+{
+  list-style-type: none;
+  padding: 0px;
+}
+
+.undo-list-elem
+{
+  font-family: "Futura";
+  font-size: 12px;
+  font-weight: normal;
+  color: #626262;
+  font-weight: normal;
+  text-align: left;
+  width: 210px;
+  cursor: pointer;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  padding-top: 5px;
+  padding-left: 15px;
+  height: 22px;
+  line-height: 18px;
+}
+
+
+.undo-list-elem:hover
+{
+  color: #c2c2c2;
+  background: #3a3a3a;
+}
+
+.undo-list-elem i
+{
+  font-size: 14px;
+  line-height: 18px;
+  padding-right: 5px;
+}
+
+
+.history-menu-header-text
+{
+  font-family: "Futura";
+  font-size: 14px;
+  font-weight: normal;
+  color: #a2a2a2;
+  text-align: left;
+  line-height: 30px;
+  padding-left: 10px;
+  float: left;
+  cursor: pointer;
+  height: 28px;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  width: 80px;
+}
+
+.history-menu-header-text i
+{
+  padding-right: 7px;
+  font-size: 16px;
+}
+
+.undo-history
+{
+  clear: both;
+  background: #2a2a2a
+}
