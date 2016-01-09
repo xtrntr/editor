@@ -16,6 +16,13 @@
      {:element :arc}
      {:element :circle}]
 
+     :info 
+     {
+       :title "Techno-Digm"
+       :subtitle "offline programming tool"
+       :version "v0.0.1"
+     } 
+  
      ;; all transient state i.e. drawing flags here.
      :drawing
      {:x1 0
@@ -48,6 +55,7 @@
     :main-app
     {:background-image "img/circuitboard.jpg"
      :elements []
+     :undo-history []
      }
     }
    ))

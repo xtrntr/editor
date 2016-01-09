@@ -3,6 +3,7 @@
   (:require [goog.events :as events]
             [om.core :as om :include-macros true]
             [om.dom :as omdom :include-macros true]
+            [editor.timemachine :as timemachine]
             [cljs.core.async :refer [put! chan <! alts!]]))
 
 (def ESC-KEY 27)
@@ -43,10 +44,10 @@
         shiftKey (.-shiftKey event)
         ctrlKey (.-ctrlKey event)
         handler (cond
-                   ;(and (= keyCode Z-KEY) (or ctrlKey metaKey) shiftKey)
-                   ;  #(timemachine/do-redo)
-                   ;(and (= keyCode Z-KEY) (or ctrlKey metaKey))
-                   ;  #(timemachine/do-undo)
+                 (and (= keyCode Z-KEY) (or ctrlKey metaKey) shiftKey)
+                 #(timemachine/do-redo)
+                 (and (= keyCode Z-KEY) (or ctrlKey metaKey))
+                 #(timemachine/do-undo)
                  (= keyCode ESC-KEY) #(om/update! app [:drawing :element-draw-step] 1)
                  (or ctrlKey metaKey) #(toggle-panning app)
                  :else #(toggle-drawing app)

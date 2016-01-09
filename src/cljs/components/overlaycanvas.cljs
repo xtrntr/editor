@@ -78,7 +78,6 @@
             (draw-dot ctx (conv-x x) (conv-y y) color 10)))
         (when (= :circ type)
           (let [{:keys [x y color size]} element]
-            (.log js/console element)
             (draw-circ ctx (conv-x x) (conv-y y) color size)
             ))
         ))

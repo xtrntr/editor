@@ -81,7 +81,10 @@
     (when start-drawing?
       (when dot-being-drawn
         (om/transact! app [:main-app :elements] 
-          (fn [x] (conj x {:type :dot :x pixel-x :y pixel-y :color paint-color}))))
+          (fn [x] (conj x {:type :dot :x pixel-x :y pixel-y :color paint-color})))
+        (om/transact! app [:main-app :undo-history]
+              #(conj % {:action (str "Added Dot") :icon "dot"})
+              :add-to-undo))
       (when line-being-drawn
         (when step1
           (om/update! app [:drawing :x1] pixel-x)
@@ -104,7 +107,10 @@
                     (conj x {:type :line :x1 x1 :y1 y1 :x2 x1 :y2 pixel-y
                              :color paint-color}))
                   (conj x {:type :line :x1 x1 :y1 y1 :x2 pixel-x :y2 pixel-y
-                           :color paint-color})))))
+                           :color paint-color}))))
+            (om/transact! app [:main-app :undo-history]
+              #(conj % {:action (str "Added Line") :icon "line"})
+              :add-to-undo))
           (om/update! app [:drawing :element-draw-step] 1)))
       (when arc-being-drawn
         (when step1
@@ -131,7 +137,10 @@
               (fn [x] 
                 (conj x {:type :circ :x x1 :y y1 
                          :color paint-color :size size})))
-            (om/update! app [:drawing :element-draw-step] 1))))
+            (om/transact! app [:main-app :undo-history]
+              #(conj % {:action (str "Added Circle") :icon "circle"})
+              :add-to-undo)
+          (om/update! app [:drawing :element-draw-step] 1))))
       )
     (when is-drawing?
       (when step1

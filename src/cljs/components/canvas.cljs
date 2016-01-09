@@ -7,9 +7,9 @@
 
 (defn draw-image
   [app owner dom-node-ref]
-  (let [offset-x (get-in @app [:main-app :canvas-offset-x])
-        offset-y (get-in @app [:main-app :canvas-offset-y])
-        zoom-factor (get-in @app [:main-app :zoom-factor])
+  (let [offset-x (get-in @app [:drawing :canvas-offset-x])
+        offset-y (get-in @app [:drawing :canvas-offset-y])
+        zoom-factor (get-in @app [:drawing :zoom-factor])
         canvas (om/get-node owner dom-node-ref)
         width (.-width canvas)
         height (.-height canvas)
@@ -43,8 +43,8 @@
 
     om/IRender
     (render [this]
-      (let [width (get-in app [:main-app :canvas-width]) 
-            height (get-in app [:main-app :canvas-height])]
+      (let [width (get-in app [:canvas-width]) 
+            height (get-in app [:canvas-height])]
         (dom/canvas
          #js {:id "background-canvas"
               :width width
