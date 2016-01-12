@@ -3,7 +3,7 @@
   (:require [om.core :as om :include-macros true]
             [om.dom :as dom :include-macros true]
             [editor.drawing :as draw]
-            [editor.drawing_utilities :refer [draw-line draw-dot draw-circ]]
+            [editor.drawing_utilities :refer [draw-line draw-dot draw-circ draw-dashed-line]]
             [cljs.core.async :refer [put! chan <! alts!]]))
 
 (defn canvas2pixel
@@ -21,12 +21,18 @@
         canvas-offset-x (get-in @app [:drawing :canvas-offset-x])
         canvas-offset-y (get-in @app [:drawing :canvas-offset-y])
         zoom (get-in @app [:drawing :zoom-factor])
-        canvas-x1 (pixel2canvas (get-in @app [:drawing :x1]) canvas-offset-x zoom)
-        canvas-y1 (pixel2canvas (get-in @app [:drawing :y1]) canvas-offset-y zoom)
-        canvas-x2 (pixel2canvas (get-in @app [:drawing :x2]) canvas-offset-x zoom)
-        canvas-y2 (pixel2canvas (get-in @app [:drawing :y2]) canvas-offset-y zoom)
-        canvas-x3 (pixel2canvas (get-in @app [:drawing :x3]) canvas-offset-x zoom)
-        canvas-y3 (pixel2canvas (get-in @app [:drawing :y3]) canvas-offset-y zoom)
+        pixel-x1 (get-in @app [:drawing :x1])
+        pixel-y1 (get-in @app [:drawing :y1])
+        pixel-x2 (get-in @app [:drawing :x2])
+        pixel-y2 (get-in @app [:drawing :y2])
+        pixel-x3 (get-in @app [:drawing :x3])
+        pixel-y3 (get-in @app [:drawing :y3])
+        canvas-x1 (pixel2canvas pixel-x1 canvas-offset-x zoom)
+        canvas-y1 (pixel2canvas pixel-y1 canvas-offset-y zoom)
+        canvas-x2 (pixel2canvas pixel-x2 canvas-offset-x zoom)
+        canvas-y2 (pixel2canvas pixel-y2 canvas-offset-y zoom)
+        canvas-x3 (pixel2canvas pixel-x3 canvas-offset-x zoom)
+        canvas-y3 (pixel2canvas pixel-y3 canvas-offset-y zoom)
         paint-color (get-in @app [:drawing :paint-color])
         element-draw-step (get-in @app [:drawing :element-draw-step])
         element-to-draw (get-in @app [:drawing :element-to-draw])
@@ -46,6 +52,7 @@
         polyline-being-drawn (= element-to-draw :polyline)
         arc-being-drawn (= element-to-draw :arc)
         line-being-drawn (= element-to-draw :line)
+        img-being-selected (= element-to-draw :select-img)
         ]
     
     (.clearRect ctx 0 0 width height)
@@ -53,6 +60,12 @@
       (draw-line ctx canvas-x1 canvas-y1 canvas-x2 canvas-y2 paint-color))
     (when (and step2 circ-being-drawn)
       (draw-circ ctx canvas-x1 canvas-y1 paint-color size))
+    (when img-being-selected
+      (when step2 
+        (draw-dashed-line ctx canvas-x1 canvas-y1 canvas-x2 canvas-y1 paint-color)
+        (draw-dashed-line ctx canvas-x2 canvas-y1 canvas-x2 canvas-y2 paint-color)
+        (draw-dashed-line ctx canvas-x2 canvas-y2 canvas-x1 canvas-y2 paint-color)
+        (draw-dashed-line ctx canvas-x1 canvas-y2 canvas-x1 canvas-y1 paint-color)))
     ))
 
 (defn draw-overlay-drawn 

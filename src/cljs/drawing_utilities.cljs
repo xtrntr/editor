@@ -17,6 +17,16 @@
   (.stroke ctx)
   (.closePath ctx))
 
+(defn draw-dashed-line
+  [ctx x1 y1 x2 y2 color]
+  (set! (.-strokeStyle ctx) color)
+  (.setLineDash ctx #js[5 15])
+  (.beginPath ctx)
+  (.moveTo ctx x1 y1)
+  (.lineTo ctx x2 y2)
+  (.stroke ctx)
+  (.closePath ctx))
+
 (defn draw-dot
   [ctx x y color size]
   (set! (.-fillStyle ctx) color)

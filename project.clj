@@ -9,7 +9,9 @@
                  [org.clojure/core.async "0.2.374"]
                  [sablono "0.3.6"]
                  [org.omcljs/om "0.9.0"]
-                 [cljsjs/fabric "1.5.0-0"]
+
+                 [cljsjs/fixed-data-table "0.2.0-0"]
+                 [cljsjs/reactabular "0.7.0-0"]
                  
                  ;web server
                  [ring "1.4.0"]
@@ -27,9 +29,7 @@
   :cljsbuild {:builds
               [{:id "dev"
                 :source-paths ["src/cljs"]
-
                 :figwheel {:on-jsload "editor.core/on-js-reload"}
-
                 :compiler {:main editor.core
                            :asset-path "js/compiled/out"
                            :output-to "resources/public/js/compiled/editor.js"

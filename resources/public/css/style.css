@@ -50,7 +50,7 @@ body
   cursor: pointer;
 }
 
-#command-selector
+.command-selector
 {
   position: absolute;
   top: 320px;
@@ -62,7 +62,7 @@ body
   overflow: auto;
 }
 
-.PaletteContainer
+.palette
 {
   position: absolute;
   top: 185px;
@@ -163,7 +163,7 @@ body
 
 /** commandsz! **/
 
-.command-menu
+#command-menu
 {
   position: absolute;
   width: 230px;
@@ -174,7 +174,7 @@ body
   padding-left: 3px;
 }
 
-.command-type-item
+#command-type-item
 {
   font-family: "Futura";
   font-size: 10px;
@@ -222,12 +222,12 @@ body
   float: left;
 }
 
-.TimeMachineContainer
+#TimeMachineContainer
 {
   position: absolute;
   width: 230px;
   height: 1250px;
-  top: 0px;
+  top: 0px; 
   right: 0px;
   background: #2a2a2a;
   overflow: auto;
@@ -245,7 +245,7 @@ body
   padding: 0px;
 }
 
-.undo-list-elem
+.undo-list-elem 
 {
   font-family: "Futura";
   font-size: 12px;
@@ -278,7 +278,7 @@ body
 }
 
 
-.history-menu-header-text
+#history-menu-header-text
 {
   font-family: "Futura";
   font-size: 14px;
@@ -292,10 +292,10 @@ body
   height: 28px;
   -webkit-user-select: none;
   -moz-user-select: none;
-  width: 80px;
+  width: 230px;
 }
 
-.history-menu-header-text i
+#history-menu-header-text i
 {
   padding-right: 7px;
   font-size: 16px;
@@ -305,4 +305,34 @@ body
 {
   clear: both;
   background: #2a2a2a
+}
+
+/************************************************************/
+/* Title Stuff */
+/************************************************************/
+
+#app-title
+{
+  text-align: center;
+  font-family: 'Leckerli One', cursive;
+  font-size: 42px;
+  color: #e2e2e2;
+  -webkit-font-smoothing: antialiased;
+  font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  text-shadow: 1px 1px 1px #000;
+  -webkit-user-select: none;
+  -moz-user-select: none; 
+}
+
+#app-subtitle
+{
+  text-align: center;
+  font-family: "Futura";
+  font-size: 11px;
+  color: #626262;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  text-rendering: optimizeLegibility;
+  margin-top: -15px;
 }

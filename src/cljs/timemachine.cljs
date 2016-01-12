@@ -22,7 +22,7 @@
                     (get-in @app/app-state [:main-app]))))
 
 (defn show-history-preview [idx]
-  (.log js/console @app-history)
+  (.log js/console idx)
   (reset! preview-state
           (assoc-in @preview-state [:main-app]
                     (nth @app-history idx))))

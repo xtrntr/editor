@@ -12,74 +12,115 @@
             [editor.components.keylistener :as keyhandler]
             [editor.components.mouselistener :as mousehandler]
             [editor.components.test :as test]
-            [editor.components.commands :as commands]))
+            [editor.components.table :as table]
+            [editor.components.commands :as commands]
+            [cljsjs.reactabular]
+            [cljsjs.fixed-data-table]
+            ))
 
 (reset! timemachine/preview-state @app/app-state)
 
-
 (defn tx-listener [tx-data root-cursor]
   (timemachine/handle-transaction tx-data root-cursor))
-
-;; =============================================================================
-;; This got out of hand before I got the hang of OM. Subsequent version will
-;; place everything in a master component, so the app will ideally have one root
 
 (defn title-component 
   [app owner]
   (reify
     om/IRender
     (render [this]
-      (omdom/h1 #js {:className "app-title"}
+      (omdom/h1 #js {:id "app-title"}
                 (:title app)
-                (omdom/h6 #js {:className "app-subtitle"}
+                (omdom/h6 #js {:id "app-subtitle"}
                           (str (:subtitle app) " / " (:version app)))))))
 
+(comment)
 (om/root
-  title-component
-  app/app-state
-  {:path [:info]
-   :target (. js/document (getElementById "title"))
-   :tx-listen #(tx-listener % %)
-   })
-
-(om/root
- editorcanvas/background-canvas-component
+ title-component
  app/app-state
- {:target (. js/document (getElementById "background-canvas"))})
+ {:path [:info]
+  :target (. js/document (getElementById "title"))
+  :tx-listen #(tx-listener % %)
+  })
 
-(om/root
- overlaycanvas/overlay-canvas-component
- app/app-state
- {:target (. js/document (getElementById "overlay-canvas"))})
+(defn screen 
+  [app owner]
+  (om/component
+   (omdom/div #js {:id "main"}
+              (om/build
+               title-component
+               (get-in app [:info]))
+              (om/build 
+               editorcanvas/background-canvas-component
+               app)
+              (om/build
+               overlaycanvas/overlay-canvas-component
+               app)
+              (om/build
+               mousehandler/mouse-listener-component
+               app)
+              (om/build
+               test/palette-component
+               app)
+              (om/build
+               commands/command-selector-component
+               app)
+              (om/build
+               keyhandler/key-listener-component
+               app)
+              (omdom/div #js {:id "TimeMachineContainer"}
+                         (om/build
+                          historylist/header-component
+                          app)
+                         (om/build 
+                          historylist/history-list-component
+                           (get-in @app [:main-app :undo-history]))
+                         ))))
 
-(om/root
- mousehandler/mouse-listener-component
- app/app-state
- {:target (. js/document (getElementById "canvas-mouse-handler"))})
+(om/root screen app/app-state 
+         {:target (. js/document (getElementById "app"))}) 
 
-(om/root
-  test/palette-component
-  app/app-state
-  {:target (. js/document (getElementById "palette"))})
 
-(om/root
- commands/command-selector-component
- app/app-state
- {:target (. js/document (getElementById "command-selector"))})
+(comment
 
-(om/root
- keyhandler/key-listener-component
- app/app-state
- {:target (. js/document (getElementById "global-key-handler"))})
+  (om/root
+   editorcanvas/background-canvas-component
+   app/app-state
+   {:target (. js/document (getElementById "background-canvas"))})
 
-(om/root
- historylist/history-list-component
- app/app-state
- {:target (. js/document (getElementById "undo-history"))
-  :path [:main-app :undo-history]})
+  (om/root
+   overlaycanvas/overlay-canvas-component
+   app/app-state
+   {:target (. js/document (getElementById "overlay-canvas"))})
 
-(om/root
- historylist/header-component
- app/app-state
- {:target (. js/document (getElementById "time-machine-header"))})
- 
+  (om/root
+   mousehandler/mouse-listener-component
+   app/app-state
+   {:target (. js/document (getElementById "canvas-mouse-handler"))})
+
+  (om/root
+   test/palette-component
+   app/app-state
+   {:target (. js/document (getElementById "palette"))})
+
+  (om/root
+   commands/command-selector-componentx
+   app/app-state
+   {:target (. js/document (getElementById "command-selector"))})
+
+  (om/root
+   keyhandler/key-listener-component
+   app/app-state
+   {:target (. js/document (getElementById "global-key-handler"))})
+
+  (om/root
+   historylist/history-list-component
+   app/app-state
+   {:target (. js/document (getElementById "undo-history"))
+    :path [:main-app :undo-history]})
+
+  (om/root
+   historylist/header-component
+   app/app-state
+   {:target (. js/document (getElementById "time-machine-header"))})
+  
+  )

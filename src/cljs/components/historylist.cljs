@@ -14,11 +14,12 @@
              (map-indexed
               (fn [idx history-elem]
                 (let [class-name "undo-list-elem"
-                      icon-class (str "icon-" (:icon history-elem))
+                      icon-class (str "icon-"  history-elem)
                       undo-history-count (count undo-history)
                       real-idx (dec (- undo-history-count idx))]
+                  ;(.log js/console history-element)
                   (omdom/li #js {:className class-name
-                                 :onMouseEnter #(timemachine/show-history-preview real-idx)
+                                 :onMouseEnter #(timemachine/show-history-preview undo-history)
                                  :onMouseLeave #(timemachine/update-preview)}
                             (omdom/i #js {:className icon-class})
                             (:action history-elem))))
@@ -33,8 +34,7 @@
   (reify
     om/IRender
     (render [this]
-      (omdom/div nil
-                 (omdom/div #js {:className "history-menu-header-text"}
-                            (omdom/i #js {:className "icon-back-in-time"})
-                            "History")))))
+      (omdom/div #js {:id "history-menu-header-text"}
+                 (omdom/i #js {:className "icon-back-in-time"})
+                 "History"))))
 

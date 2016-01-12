@@ -1,10 +1,24 @@
 (ns editor.appstate)
 
+
+(defn gen-table
+  "Generate `size` rows vector of 4 columns vectors to mock up the table."
+  [size]
+  (mapv (fn [i] [i                                                   ; Number
+                 (rand-int 1000)                                     ; Amount
+                 (rand)                                              ; Coeff
+                 (rand-nth ["Here" "There" "Nowhere" "Somewhere"])]) ; Store
+        (range 1 (inc size))))
+
+(def meh (gen-table 10)) 
+
 (def app-state
   (atom
    {;; all constants here
     :canvas-width 500
     :canvas-height 500
+    :img-display-width 0
+    :img-display-height 0
     
     :elements
     [{:type :line :x1 0 :y1 0 :x2 500 :y2 500 :color "#C936D3"}]
@@ -22,6 +36,8 @@
        :subtitle "offline programming tool"
        :version "v0.0.1"
      } 
+
+    :table meh
   
      ;; all transient state i.e. drawing flags here.
      :drawing
@@ -55,8 +71,10 @@
     :main-app
     {:background-image "img/circuitboard.jpg"
      :elements []
-     :undo-history []
+     :undo-history [{:action "Opened New Canvas" :icon "tag"}]
+     :selected-image [:img
+                      :width 0
+                      :height 0]
      }
-    }
-   ))
+    }))
 

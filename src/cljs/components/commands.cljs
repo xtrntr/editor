@@ -44,7 +44,7 @@
      
     om/IRenderState
     (render-state [this {:keys [command-chan]}]
-      (omdom/div #js {:className "command-menu"}
+      (omdom/div #js {:className "command-selector"}
         (om/build command-button-component app {:init-state {:command-chan command-chan
                                                              :element-to-draw :dot
                                                              :css-class "icon-brush"}})
@@ -55,5 +55,5 @@
                                                              :element-to-draw :circ
                                                              :css-class "icon-edit"}})
         (om/build command-button-component app {:init-state {:command-chan command-chan
-                                                             :element-to-draw :panning
+                                                             :element-to-draw :select-img
                                                              :css-class "icon-bucket"}})))))

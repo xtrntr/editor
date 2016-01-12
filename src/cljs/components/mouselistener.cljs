@@ -61,6 +61,7 @@
         arc-being-drawn (= element-to-draw :arc)
         dot-being-drawn (= element-to-draw :dot)
         line-being-drawn (= element-to-draw :line)
+        img-being-selected (= element-to-draw :select-img)
         
         ;variables for zooming
         ;a mouse wheel will be +/- 120
@@ -84,7 +85,8 @@
           (fn [x] (conj x {:type :dot :x pixel-x :y pixel-y :color paint-color})))
         (om/transact! app [:main-app :undo-history]
               #(conj % {:action (str "Added Dot") :icon "dot"})
-              :add-to-undo))
+              :add-to-undo)
+        (.log js/console (get-in @app [:main-app :undo-history])))
       (when line-being-drawn
         (when step1
           (om/update! app [:drawing :x1] pixel-x)
@@ -112,7 +114,7 @@
               #(conj % {:action (str "Added Line") :icon "line"})
               :add-to-undo))
           (om/update! app [:drawing :element-draw-step] 1)))
-      (when arc-being-drawn
+      (when img-being-selected
         (when step1
           (om/update! app [:drawing :x1] pixel-x)
           (om/update! app [:drawing :y1] pixel-y)
@@ -120,7 +122,22 @@
           (om/update! app [:drawing :y2] pixel-y)
           (om/update! app [:drawing :element-draw-step] 2))
         (when step2
-          )
+          (let [width (abs (- x1 pixel-x))
+                height (abs (- y1 pixel-y))]
+            (om/update! app [:drawing :x2] pixel-x)
+            (om/update! app [:drawing :y2] pixel-y)
+            (om/update! app [:main-app :selected-image]
+                        {:width width
+                         :height height})
+            (om/update! app [:drawing :element-draw-step] 3))))
+      (when arc-being-drawn
+        (when step1
+          (om/update! app [:drawing :x1] pixel-x)
+          (om/update! app [:drawing :y1] pixel-y)
+          (om/update! app [:drawing :x2] pixel-x)
+          (om/update! app [:drawing :y2] pixel-y)
+          (om/update! app [:drawing :element-draw-step] 2))
+        (when step2)
         (when step3)
         )
       (when circ-being-drawn
@@ -140,7 +157,8 @@
             (om/transact! app [:main-app :undo-history]
               #(conj % {:action (str "Added Circle") :icon "circle"})
               :add-to-undo)
-          (om/update! app [:drawing :element-draw-step] 1))))
+            (om/update! app [:drawing :element-draw-step] 1)
+            (.log js/console (get-in @app [:table])))))
       )
     (when is-drawing?
       (when step1
@@ -152,7 +170,7 @@
               snap-to-x-axis (> delta-x delta-y)
               circ-size (dist x1 y1 pixel-x pixel-y)]
           (om/update! app [:drawing :circ-size] circ-size)
-          (if straight-line-snapping
+          (if (and line-being-drawn straight-line-snapping)
             (if snap-to-x-axis
               (do (om/update! app [:drawing :x2] pixel-x)
                   (om/update! app [:drawing :y2] y1))
@@ -215,7 +233,7 @@
     ;attach event listeners here.
     om/IDidMount
     (did-mount [_]
-      (let [painter-watcher (om/get-node owner "painter-watcher-ref")
+      (let [painter-watcher (om/get-node owner "canvas-mouse-handler-ref")
             mouse-chan (om/get-state owner :mouse-chan)]
         (events/listen painter-watcher "mousemove" #(put! mouse-chan %))
         (events/listen painter-watcher "mousedown" #(put! mouse-chan %))
@@ -226,7 +244,8 @@
     (render [this]
       (let [screen-canvas-width (get-in app [:canvas-width])
             screen-canvas-height (get-in app [:canvas-height])]
-        (dom/div #js {:id "painter-watcher"
+        (dom/div #js {:id "canvas-mouse-handler"
                       :style #js {:width screen-canvas-width
-                                  :height screen-canvas-height}
-                      :ref "painter-watcher-ref"})))))
+                                  :height screen-canvas-height
+                                  :className "canvas"}
+                      :ref "canvas-mouse-handler-ref"})))))
